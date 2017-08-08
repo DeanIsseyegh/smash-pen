@@ -1,36 +1,47 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import logo from './smashball.svg';
 import './App.css';
 import './pure-release-1.0.0/base.css';
 import './pure-release-1.0.0/buttons.css';
 
-// react-dom (what we'll use here)
-import { BrowserRouter, Route, Link } from 'react-router-dom'
+import {Route, Link} from 'react-router-dom'
+import CharacterList from "./CharacterList";
+import PlayerList from "./PlayerList";
+import Main from "./Main";
+import EditCharacter from "./EditCharacter";
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to SmashPen</h2>
-        </div>
-        <p className="App-intro">
+	constructor(props) {
+		super(props);
+		this.setChar = this.setChar.bind(this);
+		this.state = { char: '' };
+	}
 
-        </p>
+	setChar(char) {
+		this.setState({ char: char });
+	}
 
-			  <a class="pure-button" href="#">A Pure Button</a>
-			  <button class="pure-button">A Pure Button</button>
+	render() {
+		return (
+			<div className="App">
+				<div className="App-header">
+					<img src={logo} className="App-logo" alt="logo"/>
+					<h2>Welcome to SmashPen</h2>
+				</div>
+				<p className="App-intro">
+					<Link to="/player"><button className="pure-button">Players</button></Link>
+					<Link to="/"><button className="pure-button">Main</button></Link>
+					<Link to="/character"><button className="pure-button">Characters</button></Link>
+				</p>
 
-			  <button class="pure-button"> <Link to="/brah">Visit the Brah</Link></button>
-			  <Route path="/brah" component={NewPage}/>
+				<Route path="/player" component={PlayerList}/>
+				<Route exact path="/" component={Main}/>
+				<Route exact path="/character" component={(props) => <CharacterList {...props} onEditChar={this.setChar}/> }/>
+				<Route exact path="/character/edit" component={(props) => <EditCharacter {...props} char={this.state.char}/>} />
 
-      </div>
-    );
-  }
+			</div>
+		);
+	}
 }
-
-const NewPage = () =>
-	<div>HiBrah</div>
 
 export default App;
