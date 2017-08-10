@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './pure-release-1.0.0/tables-min.css';
+import '../pure-release-1.0.0/tables-min.css';
 import './pure-release-1.0.0/buttons-min.css';
 import {Route, Link} from 'react-router-dom'
 

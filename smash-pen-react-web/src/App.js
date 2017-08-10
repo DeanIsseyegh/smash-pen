@@ -5,10 +5,10 @@ import './pure-release-1.0.0/base.css';
 import './pure-release-1.0.0/buttons.css';
 
 import {Route, Link} from 'react-router-dom'
-import CharacterList from "./CharacterList";
+import CharacterList from "./Character/CharacterList";
 import PlayerList from "./PlayerList";
 import Main from "./Main";
-import EditCharacter from "./EditCharacter";
+import EditCharacter from "./Character/EditCharacter";
 
 class App extends Component {
 	constructor(props) {
