@@ -17,8 +17,8 @@ class App extends Component {
 		this.state = { char: '' };
 	}
 
-	setChar(char) {
-		this.setState({ char: char });
+	setChar(data) {
+		this.setState({ data });
 	}
 
 	render() {
@@ -37,7 +37,7 @@ class App extends Component {
 				<Route path="/player" component={PlayerList}/>
 				<Route exact path="/" component={Main}/>
 				<Route exact path="/character" component={(props) => <CharacterList {...props} onEditChar={this.setChar}/> }/>
-				<Route exact path="/character/edit" component={(props) => <EditCharacter {...props} char={this.state.char}/>} />
+				<Route exact path="/character/edit" component={(props) => <EditCharacter {...props} data={this.state.data}/>} />
 
 			</div>
 		);

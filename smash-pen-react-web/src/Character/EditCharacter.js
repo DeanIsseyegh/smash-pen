@@ -3,9 +3,11 @@ import React, {Component} from 'react';
 class EditCharacter extends Component {
 
 	render() {
-		console.log(this.props.char);
+		const data = this.props.data;
+		console.log(this.props.data);
 		return (
 			<div>
+				{data.name}
 				<input type="text"></input>
 			</div>
 		);
