@@ -10,18 +10,45 @@ import PlayerList from "./PlayerList";
 import Main from "./Main";
 import EditCharacter from "./Character/EditCharacter";
 
+const data = [
+	{ name: "pikachu", notes: "kewl" },
+	{ name: "mario", notes: "Mario kkk"},
+	{ name: "bayonetta", notes: ""},
+	{ name: "jigglypuff", notes: ""},
+	{ name: "gannondorf", notes: ""},
+];
+
 class App extends Component {
 	constructor(props) {
 		super(props);
-		this.setChar = this.setChar.bind(this);
-		this.state = { char: '' };
+		this.setSelectedChar = this.setSelectedChar.bind(this);
+		this.updateCharData = this.updateCharData.bind(this);
+		this.handleCharChange = this.handleCharChange.bind(this);
+		this.onCharAdd = this.onCharAdd.bind(this);
+		this.state = { data, selectedChar: "" };
 	}
 
-	setChar(data) {
+	setSelectedChar(charData) {
+		this.setState({ selectedChar: charData });
+	}
+
+	updateCharData(e) {
+		e.preventDefault();
+		//aja request to update data or something
 		this.setState({ data });
 	}
 
+	handleCharChange(e) {
+		var updatedData = data.map(it => it === this.state.selectedChar ? it.notes = e.target.value : it );
+		this.setState({ updatedData });
+	}
+
+	onCharAdd() {
+
+	}
+
 	render() {
+		console.log(this.state.successCharMsg);
 		return (
 			<div className="App">
 				<div className="App-header">
@@ -35,13 +62,29 @@ class App extends Component {
 				</p>
 
 				<Route path="/player" component={PlayerList}/>
-				<Route exact path="/" component={Main}/>
-				<Route exact path="/character" component={(props) => <CharacterList {...props} onEditChar={this.setChar}/> }/>
-				<Route exact path="/character/edit" component={(props) => <EditCharacter {...props} data={this.state.data}/>} />
 
+				<Route exact path="/" component={Main}/>
+
+				<Route exact path="/character" render={(props) => <CharacterList
+					{...props}
+					onEditChar={this.setSelectedChar}
+					data={this.state.data}/> }
+				/>
+
+				<Route exact path="/character/edit" render={(props) =>
+					<EditCharacter
+								   charData={this.state.selectedChar}
+								   updateCharData={this.updateCharData}
+								   handleCharChange={this.handleCharChange}
+								   successCharMsg={this.state.successCharMsg}/>}
+				/>
 			</div>
 		);
 	}
+
+
 }
+
+
 
 export default App;
