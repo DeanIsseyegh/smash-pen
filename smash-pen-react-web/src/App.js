@@ -11,11 +11,11 @@ import Main from "./Main";
 import EditCharacter from "./Character/EditCharacter";
 
 const data = [
-	{ name: "pikachu", notes: "kewl" },
-	{ name: "mario", notes: "Mario kkk"},
-	{ name: "bayonetta", notes: ""},
-	{ name: "jigglypuff", notes: ""},
-	{ name: "gannondorf", notes: ""},
+	{ character: {name: "pikachu"}, notes: "kewl" },
+	{ character: {name: "mario"}, notes: "Mario kkk"},
+	{ character: {name: "bayonetta"}, notes: "Sexay"},
+	{ character: {name: "jigglypuff"}, notes: ""},
+	{ character: {name: "gannondorf"}, notes: ""}
 ];
 
 class App extends Component {
@@ -26,6 +26,14 @@ class App extends Component {
 		this.handleCharChange = this.handleCharChange.bind(this);
 		this.onCharAdd = this.onCharAdd.bind(this);
 		this.state = { data, selectedChar: "" };
+		fetch('http://localhost:8080/1/character', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data[0])
+		})
 	}
 
 	setSelectedChar(charData) {

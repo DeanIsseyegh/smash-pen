@@ -17,7 +17,7 @@ class EditCharacter extends Component {
 		const { charData, handleCharChange } = this.props;
 		return (
 			<div>
-				<CharacterImage name={charData.name}/>
+				<CharacterImage name={charData.character.name}/>
 
 				{charData.name}:
 				<form onSubmit={this.handleSubmit}>

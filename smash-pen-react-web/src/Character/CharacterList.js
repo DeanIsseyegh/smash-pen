@@ -24,6 +24,13 @@ class CharacterList extends Component {
 		this.state = { charDropDownName: '' };
 	}
 
+	componentWillMount() {
+		fetch('http://localhost:8080/characters')
+			.then(response => response.json())
+			.then(result => { this.setState({ characterList: result }); return result })
+			.then(result => console.log(result));
+	}
+
 	onDropDownChange(e) {
 		this.setState({ charDropDownName: e.target.value.toLowerCase()});
 	}
@@ -42,13 +49,15 @@ class CharacterList extends Component {
 						<td>
 							<CharacterDropdown
 								onDropDownChange={this.onDropDownChange}
-								characters={characters}/>
+								characters={this.state.characterList}/>
 						</td>
 						<td>
 							<Link to={match.url + "/edit"}>
 								<button className="pure-button"
 										onClick={() =>
-											onEditChar(data.find((it) => {return it.name.toLowerCase() === this.state.charDropDownName}))}
+											onEditChar(data.find((it) =>
+												it.character.name.toLowerCase() === this.state.charDropDownName.toLowerCase()
+											))}
 								>Add</button>
 							</Link>
 						</td>
@@ -61,7 +70,7 @@ class CharacterList extends Component {
 					data.filter((it)=> it.notes)
 						.map((it) =>
 						<CharacterRow
-							key={it.name}
+							key={it.character.name}
 							data={it}
 							match={match}
 							onEditChar={onEditChar}/>)
