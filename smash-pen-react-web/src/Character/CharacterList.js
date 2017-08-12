@@ -8,15 +8,6 @@ import CharacterRow from "./CharacterRow";
 import CharacterDropdown from "./CharacterDropdown";
 import {Link} from "react-router-dom";
 
-const characters = [
-	"Pikachu",
-	"Gannondorf",
-	"Jigglypuff",
-	"Zelda",
-	"Shiek"
-
-];
-
 class CharacterList extends Component {
 	constructor(props) {
 		super(props);
@@ -25,10 +16,17 @@ class CharacterList extends Component {
 	}
 
 	componentWillMount() {
-		fetch('http://localhost:8080/characters')
+		var init = {
+			method: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': localStorage.getItem('token')
+			}
+		};
+		fetch('http://localhost:8080/characters', init)
 			.then(response => response.json())
-			.then(result => { this.setState({ characterList: result }); return result })
-			.then(result => console.log(result));
+			.then(result => { this.setState({ characterList: result })})
 	}
 
 	onDropDownChange(e) {
@@ -56,7 +54,7 @@ class CharacterList extends Component {
 								<button className="pure-button"
 										onClick={() =>
 											onEditChar(data.find((it) =>
-												it.character.name.toLowerCase() === this.state.charDropDownName.toLowerCase()
+												it.smashCharacter.name.toLowerCase() === this.state.charDropDownName.toLowerCase()
 											))}
 								>Add</button>
 							</Link>
@@ -70,7 +68,7 @@ class CharacterList extends Component {
 					data.filter((it)=> it.notes)
 						.map((it) =>
 						<CharacterRow
-							key={it.character.name}
+							key={it.smashCharacter.name}
 							data={it}
 							match={match}
 							onEditChar={onEditChar}/>)

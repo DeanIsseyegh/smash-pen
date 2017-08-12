@@ -7,7 +7,6 @@ import com.smashpen.smashpen.repository.CharacterNotesRepository;
 import com.smashpen.smashpen.repository.CharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.Collection;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/{userId}/character")
 public class CharacterRestController {
@@ -49,21 +48,17 @@ public class CharacterRestController {
 	ResponseEntity<?> add(@PathVariable Long userId, @RequestBody CharacterNotes input) throws UserNotFoundException {
 		this.validateUser(userId);
 		return this.userRepository.findById(userId).map(account -> {
-				SmashCharacter smashCharacter = characterRepository.findByName(input.getSmashCharacter().getName());
-				CharacterNotes existingNotes = characterNotesRepository.findCharacterNotesBySmashCharacterAndUser(smashCharacter, account);
-				CharacterNotes result;
-				if (existingNotes != null) {
-					existingNotes.setNotes(input.getNotes());
-					result = characterNotesRepository.save(existingNotes);
-				} else {
-					result = characterNotesRepository.save(new CharacterNotes(account, smashCharacter, input.getNotes()));
-				}
-				URI location = ServletUriComponentsBuilder
-							.fromCurrentRequest().path("/{id}")
-							.buildAndExpand(result.getId()).toUri();
-				return ResponseEntity.created(location).build();
-			})
-			.orElse(ResponseEntity.noContent().build());
+			SmashCharacter smashCharacter = characterRepository.findByName(input.getSmashCharacter().getName());
+			CharacterNotes existingNotes = characterNotesRepository.findCharacterNotesBySmashCharacterAndUser(smashCharacter, account);
+			CharacterNotes result = (existingNotes == null) ?
+					characterNotesRepository.save(new CharacterNotes(account, smashCharacter, input.getNotes())) :
+					characterNotesRepository.save(existingNotes);
+			URI location = ServletUriComponentsBuilder
+					.fromCurrentRequest().path("/{id}")
+					.buildAndExpand(result.getId()).toUri();
+			return ResponseEntity.created(location).build();
+		})
+				.orElse(ResponseEntity.noContent().build());
 	}
 
 

@@ -20,7 +20,7 @@ public class CharacterListRestController {
 		this.characterRepository = characterRepository;
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
+	@CrossOrigin(origins = "*")
 	@GetMapping("/characters")
 	List<SmashCharacter> characters() {
 		return characterRepository.findAll();

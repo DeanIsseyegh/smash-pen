@@ -5,23 +5,39 @@ class EditCharacter extends Component {
 	constructor(props) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.state = {};
+		this.handleCharChange = this.handleCharChange.bind(this);
+		this.state = { charData : props.charData };
 	}
 
 	handleSubmit(e) {
+		e.preventDefault();
 		this.setState({ successCharMsg: 'Updated!' });
-		this.props.updateCharData(e);
+		this.props.updateCharData(this.state.charData);
+	}
+
+	handleCharChange(e) {
+	/*	this.setState(
+			{
+				result: {hits: updatedHits, page},
+				results: {
+					...results,
+					[searchKey]: {hits: updatedHits, page}
+				},
+				isLoading: false
+			}
+		);*/
+		const updatedCharData = { ...this.state.charData, notes: e.target.value};
+		console.log(updatedCharData)
+		this.setState({ charData: updatedCharData });
 	}
 
 	render() {
-		const { charData, handleCharChange } = this.props;
+		const { charData } = this.props;
 		return (
 			<div>
-				<CharacterImage name={charData.character.name}/>
-
-				{charData.name}:
+				<CharacterImage name={charData.smashCharacter.name}/>
 				<form onSubmit={this.handleSubmit}>
-					<input ref={function(input) { if (input !== null)input.focus()}} onChange={handleCharChange} value={charData.notes} type="text"/>
+					<input onChange={this.handleCharChange} value={this.state.charData.notes} type="text"/>
 					<button>Submit</button>
 				</form>
 				{this.state.successCharMsg}

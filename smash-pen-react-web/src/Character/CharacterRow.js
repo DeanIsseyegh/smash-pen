@@ -12,12 +12,12 @@ class CharacterRow extends React.Component {
 	render() {
 		//TODO Create obj to hold image,name etc. in obj?
 		const data = this.props.data;
-		const { character, notes } = data;
+		const { smashCharacter, notes } = data;
 		const { onEditChar, match } = this.props;
 		return (
 			<tr>
 				<td>
-					<CharacterImage name={character.name}/>
+					<CharacterImage name={smashCharacter.name}/>
 				</td>
 				<td>
 					{notes}
