@@ -1,9 +1,8 @@
 package com.smashpen.smashpen;
 
-import com.smashpen.smashpen.account.Character;
-import com.smashpen.smashpen.account.CharacterRepository;
+import com.smashpen.smashpen.domain.SmashCharacter;
+import com.smashpen.smashpen.repository.CharacterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,11 +22,8 @@ public class CharacterListRestController {
 
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/characters")
-	List<Character> characters() {
+	List<SmashCharacter> characters() {
 		return characterRepository.findAll();
 	}
 
-	public static void main(String[] args) throws Exception {
-		SpringApplication.run(CharacterListRestController.class, args);
-	}
 }
