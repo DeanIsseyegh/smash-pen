@@ -21,14 +21,6 @@ class App extends Component {
 		this.onCharAdd = this.onCharAdd.bind(this);
 		this.onLogIn = this.onLogIn.bind(this);
 		this.state = { data: {}, selectedChar: "", isLoggedIn: false, token: "" };
-		/*fetch('http://localhost:8080/1/character', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data[0])
-		})*/
 	}
 
 	setSelectedChar(charData) {
@@ -44,7 +36,7 @@ class App extends Component {
 		//TODO THEN MERGE NEW CHAR DATA WITH OLD CHAR DATA IN REACT STATE
 
 	}
-
+	//{"username":username,"password":password}
 	onLogIn(username, password) {
 		this.setState({showSpinner: true});
 		fetch('http://localhost:8080/login', {
@@ -82,8 +74,7 @@ class App extends Component {
 		return (
 			<div className="App">
 				<MainNav isLoggedIn={isLoggedIn}/>
-				{this.state.showSpinner ?
-					<Loading/> :
+				{this.state.showSpinner ? <Loading/> :
 					<Switch>
 						<Route path="/player" component={PlayerList}/>
 
@@ -93,12 +84,14 @@ class App extends Component {
 							isLoggedIn={isLoggedIn}/>}
 						/>
 
+						{this.state.isLoggedIn &&
 						<Route exact path="/character" render={(props) => <CharacterList
 							{...props}
 							onEditChar={this.setSelectedChar}
 							data={this.state.data}/> }
-						/>
+						/>}
 
+						{this.state.isLoggedIn &&
 						<Route exact path="/character/edit" render={(props) =>
 							<EditCharacter
 							{...props}
@@ -106,7 +99,7 @@ class App extends Component {
 							updateCharData={this.updateCharData}
 							handleCharChange={this.handleCharChange}
 							successCharMsg={this.state.successCharMsg}/>}
-						/>
+						/>}
 					</Switch>
 				}
 			</div>

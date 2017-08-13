@@ -65,7 +65,7 @@ class CharacterList extends Component {
 			<br/><br/>
 			<table className="pure-table">
 				{
-					data.filter((it)=> it.notes)
+					data && data.length > 0 && data.filter((it)=> it.notes)
 						.map((it) =>
 						<CharacterRow
 							key={it.smashCharacter.name}
