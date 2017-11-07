@@ -23,21 +23,21 @@ internal constructor(private val userRepository: UserRepository,
 
     @RequestMapping(method = arrayOf(RequestMethod.GET))
     @Throws(UserNotFoundException::class)
-    internal fun readCharacters(@PathVariable userId: Long?): Collection<CharacterNotes> {
+    internal fun readCharacters(@PathVariable userId: Long): Collection<CharacterNotes> {
         this.validateUser(userId)
         return this.characterNotesRepository.findAllByUserId(userId)
     }
 
     @RequestMapping(method = arrayOf(RequestMethod.GET), value = "/{characterNotesId}")
     @Throws(UserNotFoundException::class)
-    internal fun readCharacter(@PathVariable userId: Long?, @PathVariable characterNotesId: Long?): CharacterNotes {
+    internal fun readCharacter(@PathVariable userId: Long, @PathVariable characterNotesId: Long): CharacterNotes {
         this.validateUser(userId)
-        return this.characterNotesRepository.findOne(characterNotesId)
+        return this.characterNotesRepository.findById(characterNotesId).get()
     }
 
     @RequestMapping(method = arrayOf(RequestMethod.POST))
     @Throws(UserNotFoundException::class)
-    internal fun add(@PathVariable userId: Long?, @RequestBody input: CharacterNotes): ResponseEntity<*> {
+    internal fun add(@PathVariable userId: Long, @RequestBody input: CharacterNotes): ResponseEntity<*> {
         this.validateUser(userId)
         return this.userRepository.findById(userId).map { account ->
             val smashCharacter = characterRepository.findByName(input.smashCharacter?.name)
@@ -48,15 +48,14 @@ internal constructor(private val userRepository: UserRepository,
                 characterNotesRepository.save(existingNotes)
             val location = ServletUriComponentsBuilder
                     .fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(result.id!!).toUri()
+                    .buildAndExpand(result.id).toUri()
             ResponseEntity.created(location).build<Any>()
         }
                 .orElse(ResponseEntity.noContent().build())
     }
 
-
     @Throws(UserNotFoundException::class)
-    private fun validateUser(userId: Long?) {
+    private fun validateUser(userId: Long) {
         this.userRepository.findById(userId).orElseThrow { UserNotFoundException(userId) }
         val currentUserId = this.userRepository.findByUsername(SecurityContextHolder.getContext().authentication.name).get().id
         if (userId != currentUserId) {

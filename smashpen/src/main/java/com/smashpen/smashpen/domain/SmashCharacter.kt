@@ -1,20 +1,15 @@
 package com.smashpen.smashpen.domain
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 class SmashCharacter {
 
     @Id
-    @GeneratedValue private val id: Long? = null
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Long = -1
 
-    @Column(unique = true)
     var name: String? = null
-
-    internal constructor() {}
 
     constructor(name: String) {
         this.name = name.toLowerCase()

@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.annotation.CrossOrigin
 
 @RestController
-class CharacterListRestController @Autowired
-internal constructor(private val characterRepository: CharacterRepository) {
+class CharacterListRestController(val characterRepository: CharacterRepository) {
 
     @CrossOrigin(origins = arrayOf("*"))
     @GetMapping("/characters")
