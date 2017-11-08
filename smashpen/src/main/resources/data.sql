@@ -57,9 +57,9 @@ INSERT into smash_character(name) VALUES ("yoshi");
 INSERT into smash_character(name) VALUES ("zelda");
 INSERT into smash_character(name) VALUES ("zerosuit");
 
-INSERT into user(username, password, enabled) VALUES ("dean", "password", TRUE);
-INSERT into user(username, password, enabled) VALUES ("dean2", "password", TRUE);
-INSERT into user(username, password, enabled) VALUES ("dean3", "password", TRUE);
+INSERT into user(username, password, enabled) VALUES ("dean", "{noop}password", TRUE);
+INSERT into user(username, password, enabled) VALUES ("dean2", "{noop}password", TRUE);
+INSERT into user(username, password, enabled) VALUES ("dean3", "{noop}password", TRUE);
 INSERT into user(username, password, enabled) VALUES ("d", "p", TRUE);
 
 INSERT into character_notes(notes, smash_character_id, user_id) VALUES ("yo this char rox", 1, 1);
