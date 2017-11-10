@@ -4,10 +4,8 @@ import com.smashpen.smashpen.repository.UserRepository
 import com.smashpen.smashpen.domain.CharacterNotes
 import com.smashpen.smashpen.repository.CharacterNotesRepository
 import com.smashpen.smashpen.repository.CharacterRepository
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 
 @CrossOrigin(origins = arrayOf("*"))
 @RestController
