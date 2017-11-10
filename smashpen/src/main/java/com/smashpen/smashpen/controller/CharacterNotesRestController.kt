@@ -1,9 +1,10 @@
-package com.smashpen.smashpen
+package com.smashpen.smashpen.controller
 
 import com.smashpen.smashpen.repository.UserRepository
 import com.smashpen.smashpen.domain.CharacterNotes
 import com.smashpen.smashpen.repository.CharacterNotesRepository
 import com.smashpen.smashpen.repository.CharacterRepository
+import com.smashpen.smashpen.service.CharacterNotesService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/{userId}/character")
 class CharacterNotesRestController internal constructor(private val userRepository: UserRepository,
                                                         private val characterNotesRepository: CharacterNotesRepository,
-                                                        private val characterRepository: CharacterRepository) {
+                                                        private val characterNotesService: CharacterNotesService) {
 
     @RequestMapping(method = arrayOf(RequestMethod.GET))
     @Throws(UserNotFoundException::class)
@@ -28,16 +29,9 @@ class CharacterNotesRestController internal constructor(private val userReposito
 
     @RequestMapping(method = arrayOf(RequestMethod.PUT))
     @Throws(UserNotFoundException::class)
-    internal fun addOrUpdateCharacterNotes(@PathVariable userId: Long, @RequestBody input: CharacterNotesDTO): ResponseEntity<CharacterNotes> {
+    internal fun addOrUpdateCharacterNotes(@PathVariable userId: Long, @RequestBody notesDTO: CharacterNotesDTO): ResponseEntity<CharacterNotes> {
         return userRepository.findById(userId).map { user ->
-            val smashCharacter = characterRepository.findByName(input.smashCharacter.name)
-            val existingNotes = characterNotesRepository.findBySmashCharacterAndUser(smashCharacter, user)
-            val result = if (existingNotes == null)
-                characterNotesRepository.save(CharacterNotes(user, smashCharacter, input.notes))
-            else {
-                existingNotes.notes = input.notes
-                characterNotesRepository.save(existingNotes)
-            }
+            val result = characterNotesService.createOrUpdateCharacterNotes(user, notesDTO)
             ResponseEntity.ok(result)
         }.orElse(ResponseEntity.notFound().build())
     }

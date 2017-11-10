@@ -1,4 +1,4 @@
-package com.smashpen.smashpen
+package com.smashpen.smashpen.controller
 
 import com.smashpen.smashpen.domain.CharacterNotes
 import com.smashpen.smashpen.domain.SmashCharacter
@@ -7,11 +7,10 @@ import org.junit.Before
 import org.junit.Test
 
 import com.smashpen.smashpen.repository.CharacterNotesRepository
-import com.smashpen.smashpen.repository.CharacterRepository
 import com.smashpen.smashpen.repository.UserRepository
+import com.smashpen.smashpen.service.CharacterNotesService
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.*
 import org.springframework.http.ResponseEntity
 import java.util.*
@@ -20,16 +19,16 @@ class CharacterNotesRestControllerTest {
 
     private lateinit var controller: CharacterNotesRestController
     private lateinit var characterNotesRepository: CharacterNotesRepository
-    private lateinit var characterRepository: CharacterRepository
     private lateinit var userRepository: UserRepository
+    private lateinit var characterNotesService: CharacterNotesService
 
 
     @Before
     fun setUp() {
         characterNotesRepository = mock(CharacterNotesRepository::class.java)
-        characterRepository = mock(CharacterRepository::class.java)
         userRepository = mock(UserRepository::class.java)
-        controller = CharacterNotesRestController(userRepository, characterNotesRepository, characterRepository)
+        characterNotesService = mock(CharacterNotesService::class.java)
+        controller = CharacterNotesRestController(userRepository, characterNotesRepository, characterNotesService)
     }
 
     @Test
@@ -47,34 +46,15 @@ class CharacterNotesRestControllerTest {
     }
 
     @Test
-    fun `Given a user already has a smash character notes attached, update existing one with new notes`() {
+    fun `Given user exists, add or update character notes`() {
         val user = mockUserInRepo(3)
-        val character = mockCharacterInRepo("pika")
-        val characterNotes = mockCharacterNotesInRepo(user, character, "This char sux!")
-
-        val characterNotesDTO = CharacterNotesDTO("This char rox!", SmashCharacter("pika"))
+        val character = SmashCharacter("pika")
+        val characterNotes = CharacterNotes(user, character, "This char sux!")
+        val characterNotesDTO = CharacterNotesDTO("This char rox!", character)
+        `when`(characterNotesService.createOrUpdateCharacterNotes(user, characterNotesDTO)).thenReturn(characterNotes)
         val response = controller.addOrUpdateCharacterNotes(3, characterNotesDTO)
-
-        verify(characterNotesRepository, times(1)).save(characterNotes)
-        assertThat(characterNotes.notes, `is`("This char rox!"))
+        assertThat(characterNotes, `is`(characterNotes))
         assertThat(response.statusCode, `is`(ResponseEntity.ok(characterNotes).statusCode))
-    }
-
-    @Test
-    fun `Given a user already has no smash character notes attached, create new one`() {
-        val user = mockUserInRepo(3)
-        val character = mockCharacterInRepo("pika")
-
-        val characterNotesDTO = CharacterNotesDTO("This char rox!", SmashCharacter("pika"))
-        val response = controller.addOrUpdateCharacterNotes(3, characterNotesDTO)
-
-        val argument = ArgumentCaptor.forClass(CharacterNotes::class.java)
-        verify(characterNotesRepository).save(argument.capture())
-        assertThat(argument.value.notes, `is`("This char rox!"))
-        assertThat(argument.value.user, `is`(user))
-        assertThat(argument.value.smashCharacter, `is`(character))
-
-        assertThat(response.statusCode, `is`(ResponseEntity.ok(argument.value).statusCode))
     }
 
     @Test
@@ -82,18 +62,6 @@ class CharacterNotesRestControllerTest {
         val characterNotesDTO = CharacterNotesDTO("This char rox!", SmashCharacter("pika"))
         val response = controller.addOrUpdateCharacterNotes(3, characterNotesDTO)
         assertThat(response, `is`(ResponseEntity.notFound().build()))
-    }
-
-    private fun mockCharacterNotesInRepo(user: User, character: SmashCharacter, notes: String): CharacterNotes {
-        val characterNotes = CharacterNotes(user, character, notes)
-        `when`(characterNotesRepository.findBySmashCharacterAndUser(character, user)).thenReturn(characterNotes)
-        return characterNotes
-    }
-
-    private fun mockCharacterInRepo(name: String): SmashCharacter {
-        val character = SmashCharacter(name)
-        `when`(characterRepository.findByName(name)).thenReturn(character)
-        return character
     }
 
     private fun mockUserInRepo(id: Long): User {

@@ -1,4 +1,4 @@
-package com.smashpen.smashpen
+package com.smashpen.smashpen.controller
 
 import com.smashpen.smashpen.domain.SmashCharacter
 import com.smashpen.smashpen.repository.CharacterRepository

@@ -1,6 +1,6 @@
 package com.smashpen.smashpen.security
 
-import com.smashpen.smashpen.UserNotFoundException
+import com.smashpen.smashpen.controller.UserNotFoundException
 import com.smashpen.smashpen.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.context.SecurityContextHolder
