@@ -6,6 +6,6 @@ import com.smashpen.smashpen.domain.CharacterNotes
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface CharacterNotesRepository : JpaRepository<CharacterNotes, Long> {
-    fun findAllByUserId(id: Long?): Collection<CharacterNotes>
-    fun findCharacterNotesBySmashCharacterAndUser(smashCharacter: SmashCharacter, user: User): CharacterNotes
+    fun findAllByUserId(id: Long?): List<CharacterNotes>
+    fun findBySmashCharacterAndUser(smashCharacter: SmashCharacter, user: User): CharacterNotes?
 }

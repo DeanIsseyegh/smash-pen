@@ -26,4 +26,5 @@ class CharacterNotes {
         this.notes = notes
         this.user = user
     }
+
 }

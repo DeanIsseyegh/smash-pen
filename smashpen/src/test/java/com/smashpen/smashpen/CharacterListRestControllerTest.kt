@@ -6,7 +6,7 @@ import org.junit.Before
 import org.junit.Test
 import org.hamcrest.Matchers.`is`
 
-import org.junit.Assert.*
+import org.hamcrest.MatcherAssert.assertThat
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
 
@@ -22,7 +22,7 @@ class CharacterListRestControllerTest {
     }
 
     @Test
-    fun `Given_CharacterListIsReturnedFromRepo_Then_ReturnCharacterList`() {
+    fun `Given a character list is returned from the repo then return the character list`() {
         val expectedCharacterList = listOf(SmashCharacter("pikachu"))
         `when`(characterRepository.findAll()).thenReturn(expectedCharacterList)
         assertThat(controller.characters(), `is`(expectedCharacterList))
