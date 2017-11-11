@@ -1,6 +1,5 @@
 .gradle
 /build/
-!gradle/wrapper/gradle-wrapper.jar
 /out
 
 ### STS ###
@@ -61,3 +60,5 @@ overridedb.*
 .DS_Store
 dump.rdb
 transaction-logs
+
+!gradle/wrapper/gradle-wrapper.jar
