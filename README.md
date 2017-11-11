@@ -5,13 +5,13 @@ App to allow competitive Smash Players to take notes on their characters and opp
 
 # TODO
 
-* Rewrite backend - protoype using TDD
+~~* Rewrite backend - protoype using TDD
 
 * Rewrite react frontend using redux (typescript/clojurescript maybe)
 
 * Write integration/functional tests
 
-* Implement CI integration
+~~* Implement CI integration
 
 * Try out aws/gcp deployments
 
