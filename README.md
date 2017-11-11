@@ -15,3 +15,10 @@ App to allow competitive Smash Players to take notes on their characters and opp
 
 * Try out aws/gcp deployments
 
+* dockerize
+
+* complete functionality
+
+* improve styling
+
+* react native
