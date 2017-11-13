@@ -11,13 +11,14 @@ import EditCharacter from "./Character/EditCharacter";
 import Switch from "react-router-dom/es/Switch";
 import {Loading} from "./Loading";
 import {MainNav} from "./MainNav";
-import {fetchGetInit, fetchPostInit} from "./FetchUtil";
+import {fetchGetInit, fetchPostInit, fetchPutInit} from "./FetchUtil";
 
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.setSelectedChar = this.setSelectedChar.bind(this);
 		this.updateCharData = this.updateCharData.bind(this);
+        this.mergeSingleCharDataWithFullCharData = this.mergeSingleCharDataWithFullCharData.bind(this);
 		this.onCharAdd = this.onCharAdd.bind(this);
 		this.onLogIn = this.onLogIn.bind(this);
 		this.state = { data: {}, selectedChar: "", isLoggedIn: false, token: "" };
@@ -28,15 +29,28 @@ class App extends Component {
 		this.setState({ selectedChar: charData });
 	}
 
+    mergeSingleCharDataWithFullCharData(charData, fullCharData) {
+        const newData = fullCharData;
+        fullCharData.forEach( function(it, idx) {
+            if (it.id == charData.id) {
+                newData[idx] = charData;
+            }
+        });
+        return newData;
+    }
+
 	updateCharData(charData) {
 		//aja request to update data or something
 		//this.setState({ data });
-		fetch('http://localhost:8080/1/character', fetchPostInit(charData))
-			.then(response => console.log(response))
-		//TODO THEN MERGE NEW CHAR DATA WITH OLD CHAR DATA IN REACT STATE
-
+        console.log(charData);
+        console.log(this.state.data);
+		fetch('http://localhost:8080/1/character', fetchPutInit(charData))
+			.then(response => {
+                const newData = this.mergeSingleCharDataWithFullCharData(charData, this.state.data);
+        		this.setState({ data: newData });
+            });
 	}
-	//{"username":username,"password":password}
+
 	onLogIn(username, password) {
 		this.setState({showSpinner: true});
 		fetch('http://localhost:8080/login', {

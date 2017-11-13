@@ -1,6 +1,7 @@
 package com.smashpen.smashpen.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.smashpen.smashpen.service.TokenAuthenticationService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,9 +18,12 @@ import java.util.Collections;
 
 public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 
-	public JWTLoginFilter(String url, AuthenticationManager authManager) {
+	private TokenAuthenticationService tokenAuthenticationService;
+
+	public JWTLoginFilter(String url, AuthenticationManager authManager, TokenAuthenticationService tokenAuthenticationService) {
 		super(new AntPathRequestMatcher(url));
 		setAuthenticationManager(authManager);
+		this.tokenAuthenticationService = tokenAuthenticationService;
 	}
 
 	@Override
@@ -38,7 +42,7 @@ public class JWTLoginFilter extends AbstractAuthenticationProcessingFilter {
 	@Override
 	protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication auth)
 			throws IOException, ServletException {
-		TokenAuthenticationService
+		tokenAuthenticationService
 				.addAuthentication(res, auth.getName());
 	}
 }

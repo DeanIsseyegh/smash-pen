@@ -1,24 +1,25 @@
-const fetchGetInit = () => {
-	return {
-		method: "GET",
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'Authorization': localStorage.getItem('token')
-		}
-	};
+const fetchGetInit = (body) => {
+	return fetchInit("GET", body);
 };
 
 const fetchPostInit = (body) => {
-	return {
-		method: "POST",
-		headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'Authorization': localStorage.getItem('token')
-		},
-		body: JSON.stringify(body)
-	};
+    return fetchInit("POST", body)
 };
 
-export { fetchGetInit, fetchPostInit };
+const fetchPutInit = (body) => {
+    return fetchInit("PUT", body)
+};
+
+const fetchInit = (method, body) => {
+    return {
+        method: method,
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('token')
+        },
+        body: JSON.stringify(body)
+    };
+};
+
+export { fetchGetInit, fetchPostInit, fetchPutInit };

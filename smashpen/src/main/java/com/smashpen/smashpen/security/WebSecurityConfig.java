@@ -1,5 +1,7 @@
 package com.smashpen.smashpen.security;
 
+import com.smashpen.smashpen.service.AccessValidationService;
+import com.smashpen.smashpen.service.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private DataSource dataSource;
 
+	@Autowired
+	TokenAuthenticationService tokenAuthenticationService;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().authorizeRequests()
@@ -34,11 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.cors()
 				.and()
-				// We filter the api/login requests
-				.addFilterBefore(new JWTLoginFilter("/login", authenticationManager()),
+				.addFilterBefore(new JWTLoginFilter("/login", authenticationManager(), tokenAuthenticationService),
 						UsernamePasswordAuthenticationFilter.class)
-				// And filter other requests to check the presence of JWT in header
-				.addFilterBefore(new JWTAuthenticationFilter(),
+				.addFilterBefore(new JWTAuthenticationFilter(tokenAuthenticationService),
 						UsernamePasswordAuthenticationFilter.class);
 	}
 

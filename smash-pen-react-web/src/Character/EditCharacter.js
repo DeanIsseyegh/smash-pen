@@ -27,7 +27,7 @@ class EditCharacter extends Component {
 			}
 		);*/
 		const updatedCharData = { ...this.state.charData, notes: e.target.value};
-		console.log(updatedCharData)
+		console.log(updatedCharData);
 		this.setState({ charData: updatedCharData });
 	}
 
