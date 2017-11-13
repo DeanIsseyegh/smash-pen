@@ -13,8 +13,11 @@ buildscript {
 		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
 		classpath("org.jetbrains.kotlin:kotlin-allopen:${kotlinVersion}")
         classpath "org.jetbrains.kotlin:kotlin-noarg:${kotlinVersion}"
+        classpath('se.transmode.gradle:gradle-docker:1.2')
 	}
 }
+
+group ='smashpen'
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
@@ -23,6 +26,7 @@ apply plugin: "kotlin-jpa"
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
@@ -55,4 +59,15 @@ dependencies {
 	compile("org.springframework.boot:spring-boot-starter-security")
 	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.7.0'
 	compile 'mysql:mysql-connector-java'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    applicationName = jar.baseName
+    dockerfile = file('Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into "${stageDir}/target"
+        }
+    }
 }
