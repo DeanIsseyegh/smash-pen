@@ -21,7 +21,7 @@ class CharacterNotesRestController internal constructor(private val userReposito
         return characterNotesRepository.findAllByUserId(userId)
     }
 
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value = "/{characterNotesId}")
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value = ["/{characterNotesId}"])
     @Throws(UserNotFoundException::class)
     internal fun readSingleCharacterNotes(@PathVariable userId: Long, @PathVariable characterNotesId: Long): CharacterNotes {
         return characterNotesRepository.findById(characterNotesId).get()

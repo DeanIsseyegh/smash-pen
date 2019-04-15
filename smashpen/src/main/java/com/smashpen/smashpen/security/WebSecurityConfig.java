@@ -1,6 +1,5 @@
 package com.smashpen.smashpen.security;
 
-import com.smashpen.smashpen.service.AccessValidationService;
 import com.smashpen.smashpen.service.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

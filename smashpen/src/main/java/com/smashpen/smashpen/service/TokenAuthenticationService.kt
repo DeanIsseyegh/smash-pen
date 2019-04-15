@@ -1,5 +1,7 @@
 package com.smashpen.smashpen.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.smashpen.smashpen.security.AccountCredentials
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
@@ -15,7 +17,7 @@ class TokenAuthenticationService(val clockService: ClockService, val jwtService:
     val TOKEN_PREFIX = "Bearer"
     val HEADER_STRING = "Authorization"
 
-    fun addAuthentication(response: HttpServletResponse, username: String) {
+    fun addAuthenticationToResponse(response: HttpServletResponse, username: String) {
         val expirationDate = clockService.calcCurrentDatePlusMilliseconds(tenDaysInMillis)
         val jwt = jwtService.buildToken(username, expirationDate, SECRET)
         response.addHeader(HEADER_STRING, TOKEN_PREFIX + " " + jwt)
@@ -23,14 +25,19 @@ class TokenAuthenticationService(val clockService: ClockService, val jwtService:
 
     fun getAuthentication(request: HttpServletRequest): Authentication? {
         val token = request.getHeader(HEADER_STRING)
-        if (token != null) {
-            val user = jwtService.parseUserFromToken(token, SECRET, TOKEN_PREFIX)
-            return if (user != null)
-                UsernamePasswordAuthenticationToken(user, null, emptyList<GrantedAuthority>())
-            else
-                null
-        }
-        return null
+        return if (token == null)
+            null
+        else
+            makeAuthTokenIfUserExists(jwtService.parseUserFromToken(token, SECRET, TOKEN_PREFIX))
+    }
+
+    private fun makeAuthTokenIfUserExists(username: String?): Authentication? {
+        return if (username == null) null else UsernamePasswordAuthenticationToken(username, null, emptyList<GrantedAuthority>())
+    }
+
+    //Cover via integration test
+    fun readCredentialsFromRequest(req: HttpServletRequest): AccountCredentials {
+        return ObjectMapper().readValue<AccountCredentials>(req.inputStream, AccountCredentials::class.java)
     }
 
 }
