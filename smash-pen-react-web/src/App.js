@@ -25,7 +25,6 @@ class App extends Component {
 	}
 
 	setSelectedChar(charData) {
-		console.log(charData);
 		this.setState({ selectedChar: charData });
 	}
 
@@ -40,8 +39,6 @@ class App extends Component {
     }
 
 	updateCharData(charData) {
-		//aja request to update data or something
-		//this.setState({ data });
         console.log(charData);
         console.log(this.state.data);
 		fetch('http://localhost:8080/1/character', fetchPutInit(charData))
@@ -111,7 +108,7 @@ class App extends Component {
 							{...props}
 							charData={this.state.selectedChar}
 							updateCharData={this.updateCharData}
-							handleCharChange={this.handleCharChange}
+							handleCharChange={this.handleCharUpdate}
 							successCharMsg={this.state.successCharMsg}/>}
 						/>}
 					</Switch>

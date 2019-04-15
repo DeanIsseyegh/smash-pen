@@ -12,7 +12,7 @@ class CharacterList extends Component {
 	constructor(props) {
 		super(props);
 		this.onDropDownChange = this.onDropDownChange.bind(this);
-		this.state = { charDropDownName: '' };
+        this.state = { charDropDownName: '' };
 	}
 
 	componentWillMount() {
@@ -41,7 +41,7 @@ class CharacterList extends Component {
 			Characters:
 			<br/><br/><br/>
 			<table className="pure-table">
-				<form className="pure-form">
+                <tbody>
 					<tr>
 						<td>Add a new character</td>
 						<td>
@@ -53,17 +53,16 @@ class CharacterList extends Component {
 							<Link to={match.url + "/edit"}>
 								<button className="pure-button"
 										onClick={() =>
-											onEditChar(data.find((it) =>
-												it.smashCharacter.name.toLowerCase() === this.state.charDropDownName.toLowerCase()
-											))}
+											onEditChar({notes: 'newly created character!', smashCharacter: {name: this.state.charDropDownName}})}
 								>Add</button>
 							</Link>
 						</td>
 					</tr>
-				</form>
+                </tbody>
 			</table>
 			<br/><br/>
 			<table className="pure-table">
+                <tbody>
 				{
 					data && data.length > 0 && data.filter((it)=> it.notes)
 						.map((it) =>
@@ -73,6 +72,7 @@ class CharacterList extends Component {
 							match={match}
 							onEditChar={onEditChar}/>)
 				}
+                </tbody>
 			</table>
 		</div>
 		);

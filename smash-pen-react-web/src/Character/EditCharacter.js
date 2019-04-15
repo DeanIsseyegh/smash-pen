@@ -5,7 +5,7 @@ class EditCharacter extends Component {
 	constructor(props) {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
-		this.handleCharChange = this.handleCharChange.bind(this);
+		this.handleCharUpdate = this.handleCharUpdate.bind(this);
 		this.state = { charData : props.charData };
 	}
 
@@ -15,18 +15,9 @@ class EditCharacter extends Component {
 		this.props.updateCharData(this.state.charData);
 	}
 
-	handleCharChange(e) {
-	/*	this.setState(
-			{
-				result: {hits: updatedHits, page},
-				results: {
-					...results,
-					[searchKey]: {hits: updatedHits, page}
-				},
-				isLoading: false
-			}
-		);*/
+	handleCharUpdate(e) {
 		const updatedCharData = { ...this.state.charData, notes: e.target.value};
+		console.log("Updated character...");
 		console.log(updatedCharData);
 		this.setState({ charData: updatedCharData });
 	}
@@ -37,7 +28,7 @@ class EditCharacter extends Component {
 			<div>
 				<CharacterImage name={charData.smashCharacter.name}/>
 				<form onSubmit={this.handleSubmit}>
-					<input onChange={this.handleCharChange} value={this.state.charData.notes} type="text"/>
+					<input onChange={this.handleCharUpdate} value={this.state.charData.notes} type="text"/>
 					<button>Submit</button>
 				</form>
 				{this.state.successCharMsg}
