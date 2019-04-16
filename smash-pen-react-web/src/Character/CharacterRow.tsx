@@ -3,22 +3,13 @@ import '../pure-release-1.0.0/tables-min.css';
 import '../pure-release-1.0.0/buttons-min.css';
 import {Link, match} from 'react-router-dom'
 import CharacterImage from "./CharacterImage";
+import {CharNotes, OnEditChar } from "../App";
 
-type CharacterRowProps = {
-    data: Data;
-    onEditChar: (data: Data) => void;
+interface CharacterRowProps {
+    charNotes: CharNotes;
+    onEditChar: OnEditChar;
     match: match<string>;
 }
-
-type Data = {
-    smashCharacter: SmashCharacter;
-    notes: string;
-}
-
-type SmashCharacter = {
-    name: string
-}
-
 
 class CharacterRow extends Component<CharacterRowProps> {
 	constructor(props: CharacterRowProps) {
@@ -27,8 +18,8 @@ class CharacterRow extends Component<CharacterRowProps> {
 
 	render() {
 		//TODO Create obj to hold image,name etc. in obj?
-		const data: Data = this.props.data;
-		const { smashCharacter, notes } = data;
+		const charNotes: CharNotes = this.props.charNotes;
+		const { smashCharacter, notes } = charNotes;
 		const { onEditChar, match } = this.props;
 		return (
 			<tr>
@@ -40,7 +31,7 @@ class CharacterRow extends Component<CharacterRowProps> {
 				</td>
 				<td>
 					<Link to={match.url + "/edit"}>
-						<button className="pure-button" onClick={() => onEditChar(data)}>Edit</button>
+						<button className="pure-button" onClick={() => onEditChar(charNotes)}>Edit</button>
 					</Link>
 				</td>
 			</tr>

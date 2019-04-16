@@ -3,52 +3,80 @@ import './App.css';
 import './pure-release-1.0.0/base.css';
 import './pure-release-1.0.0/buttons.css';
 
-import {Route} from 'react-router-dom'
+import {Route, Switch} from 'react-router-dom'
 import CharacterList from "./Character/CharacterList";
 import PlayerList from "./PlayerList";
 import Main from "./Main";
 import EditCharacter from "./Character/EditCharacter";
-import Switch from "react-router-dom/es/Switch";
 import {Loading} from "./Loading";
 import {MainNav} from "./MainNav";
-import {fetchGetInit, fetchPostInit, fetchPutInit} from "./FetchUtil";
+import {fetchGetInit, fetchPutInit} from "./FetchUtil";
 
-class App extends Component {
-	constructor(props) {
+interface AppProps {
+    onEditChar: OnEditChar
+}
+
+interface AppState {
+    isLoggedIn: boolean;
+    showSpinner: boolean;
+    token: string;
+    selectedChar: CharNotes
+    userCharData: UserCharData
+}
+
+export type OnEditChar = (charNotes: CharNotes) => void;
+
+export type UpdateCharData = (charData: CharNotes) => void;
+
+export interface CharNotes {
+    id?: number;
+    smashCharacter: SmashCharacter;
+    notes: string;
+}
+
+export interface SmashCharacter {
+    id?: number;
+    name: string
+}
+
+export interface UserCharData {
+    charNotesList: CharNotes[]
+}
+
+class App extends Component<AppProps, AppState> {
+	constructor(props: AppProps) {
 		super(props);
 		this.setSelectedChar = this.setSelectedChar.bind(this);
 		this.updateCharData = this.updateCharData.bind(this);
         this.mergeSingleCharDataWithFullCharData = this.mergeSingleCharDataWithFullCharData.bind(this);
-		this.onCharAdd = this.onCharAdd.bind(this);
 		this.onLogIn = this.onLogIn.bind(this);
-		this.state = { data: {}, selectedChar: "", isLoggedIn: false, token: "" };
+		const emptyCharData: CharNotes = { smashCharacter: {id: 0, name: ''}, notes: '' };
+		this.state = { userCharData: { charNotesList: []}, selectedChar: emptyCharData, isLoggedIn: false, token: "", showSpinner: false };
 	}
 
-	setSelectedChar(charData) {
+	setSelectedChar(charData: CharNotes): void {
 		this.setState({ selectedChar: charData });
 	}
 
-    mergeSingleCharDataWithFullCharData(charData, fullCharData) {
-        const newData = fullCharData;
-        fullCharData.forEach( function(it, idx) {
+    mergeSingleCharDataWithFullCharData(charData: CharNotes, fullCharData: UserCharData): UserCharData {
+        const newData = fullCharData.charNotesList;
+        newData.forEach( function(it, idx) {
             if (it.id == charData.id) {
                 newData[idx] = charData;
             }
         });
-        return newData;
+        return {charNotesList: newData};
     }
 
-	updateCharData(charData) {
-        console.log(charData);
-        console.log(this.state.data);
+	updateCharData(charData: CharNotes): void {
 		fetch('http://localhost:8080/1/character', fetchPutInit(charData))
 			.then(response => {
-                const newData = this.mergeSingleCharDataWithFullCharData(charData, this.state.data);
-        		this.setState({ data: newData });
+                const newData = this.mergeSingleCharDataWithFullCharData(charData, this.state.userCharData);
+        		this.setState({ userCharData: newData });
             });
 	}
 
-	onLogIn(username, password) {
+	onLogIn(username: string, password: string): void {
 		this.setState({showSpinner: true});
 		fetch('http://localhost:8080/login', {
 			method: 'POST',
@@ -60,7 +88,8 @@ class App extends Component {
 		})
 		.then(response => {
 				if (response && response.headers.get('authorization')) {
-					localStorage.setItem('token', response.headers.get('authorization'));
+                    const authHeader = response.headers.get('authorization');
+					localStorage.setItem('token', authHeader ? authHeader : '');
 					this.setState({showSpinner: false, isLoggedIn: true});
 				} else {
 					throw "Login failed"
@@ -69,15 +98,8 @@ class App extends Component {
 		)
 		.then(() => fetch("http://localhost:8080/1/character", fetchGetInit()))
 		.then(response => response.json())
-		.then(json => this.setState({data: json}))
-
-		.catch(err =>
-			this.setState({showSpinner: false, isLoggedIn: false})
-		)
-	}
-
-	onCharAdd() {
-
+		.then(json => this.setState({userCharData: {charNotesList: json}}))
+		.catch(err => this.setState({showSpinner: false, isLoggedIn: false}));
 	}
 
 	render() {
@@ -97,19 +119,17 @@ class App extends Component {
 
 						{this.state.isLoggedIn &&
 						<Route exact path="/character" render={(props) => <CharacterList
-							{...props}
-							onEditChar={this.setSelectedChar}
-							data={this.state.data}/> }
+                            {...props}
+                            onEditChar={this.setSelectedChar}
+                            userCharData={this.state.userCharData}/>}
 						/>}
 
 						{this.state.isLoggedIn &&
 						<Route exact path="/character/edit" render={(props) =>
 							<EditCharacter
-							{...props}
-							charData={this.state.selectedChar}
-							updateCharData={this.updateCharData}
-							handleCharChange={this.handleCharUpdate}
-							successCharMsg={this.state.successCharMsg}/>}
+                                {...props}
+                                charNotes={this.state.selectedChar}
+                                updateCharData={this.updateCharData}/>}
 						/>}
 					</Switch>
 				}
