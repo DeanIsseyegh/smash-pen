@@ -5,10 +5,10 @@ import '../pure-release-1.0.0/menus-core-min.css';
 import '../pure-release-1.0.0/menus-dropdown-min.css';
 
 import CharacterRow from "./CharacterRow";
-import CharacterDropdown from "./CharacterDropdown";
-import {Link, match} from "react-router-dom";
-import {CharNotes, OnEditChar, UserCharData} from "../App";
+import {match} from "react-router-dom";
+import {OnEditChar, UserCharData} from "../App";
 import {fetchGetInit} from "../FetchUtil";
+import AddCharacter from "./AddCharacter";
 
 interface CharacterListProps {
     onEditChar: OnEditChar;
@@ -21,7 +21,7 @@ interface CharacterListState {
     charDropDownName: string
 }
 
-interface Character {
+export interface Character {
     name: string;
 }
 
@@ -50,26 +50,11 @@ class CharacterList extends Component<CharacterListProps, CharacterListState> {
 		<div>
 			Characters:
 			<br/><br/><br/>
-			<table className="pure-table">
-                <tbody>
-					<tr>
-						<td>Add a new character</td>
-						<td>
-							<CharacterDropdown
-								onDropDownChange={this.onDropDownChange}
-								characters={this.state.characterList}/>
-						</td>
-						<td>
-							<Link to={match.url + "/edit"}>
-								<button className="pure-button"
-										onClick={() =>
-											onEditChar({notes: 'newly created character!', smashCharacter: {name: this.state.charDropDownName}})}
-								>Add</button>
-							</Link>
-						</td>
-					</tr>
-                </tbody>
-			</table>
+			<AddCharacter onDropDownChange={this.onDropDownChange}
+                          characterList={this.state.characterList}
+                          onEditChar={onEditChar}
+                          charDropDownName={this.state.charDropDownName}
+                          match={match}/>
 			<br/><br/>
 			<table className="pure-table">
                 <tbody>

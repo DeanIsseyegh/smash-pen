@@ -1,14 +1,10 @@
 import React from 'react';
 import '../pure-release-1.0.0/forms-min.css';
-import {OnDropDownChange} from "./CharacterList";
+import {Character, OnDropDownChange} from "./CharacterList";
 
 interface CharacterDropdownProps {
     characters: Character[];
     onDropDownChange: OnDropDownChange
-}
-
-interface Character {
-    name: string;
 }
 
 const CharacterDropdown = ({characters, onDropDownChange}: CharacterDropdownProps) =>
