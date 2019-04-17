@@ -17,6 +17,7 @@ interface AppProps {
 }
 
 interface AppState {
+    userId?: string;
     isLoggedIn: boolean;
     showSpinner: boolean;
     token: string;
@@ -69,7 +70,7 @@ class App extends Component<AppProps, AppState> {
     }
 
 	updateCharData(charData: CharNotes): void {
-		fetch('http://localhost:8080/1/character', fetchPutInit(charData))
+		fetch('http://localhost:8080/' + this.state.userId + '/character', fetchPutInit(charData))
 			.then(response => {
                 const newData = this.mergeSingleCharDataWithFullCharData(charData, this.state.userCharData);
         		this.setState({ userCharData: newData });
@@ -81,16 +82,17 @@ class App extends Component<AppProps, AppState> {
 		const userAndPass = {"username":username,"password":password};
 		fetch('http://localhost:8080/login', fetchPostInit(userAndPass))
 		.then(response => {
-				if (response && response.headers.get('authorization')) {
-                    const authHeader = response.headers.get('authorization');
+                const authHeader = response ? response.headers.get('authorization') : 'unset';
+                const userId = response ? response.headers.get("UserID") : 'unset';
+				if (authHeader != 'unset' && userId != 'unset') {
 					localStorage.setItem('token', authHeader ? authHeader : '');
-					this.setState({showSpinner: false, isLoggedIn: true});
+					this.setState({showSpinner: false, isLoggedIn: true, userId: userId ? userId : 'unset'});
 				} else {
 					throw "Login failed"
 				}
 			}
 		)
-		.then(() => fetch("http://localhost:8080/1/character", fetchGetInit()))
+		.then(() => fetch('http://localhost:8080/' + this.state.userId + '/character', fetchGetInit()))
 		.then(response => response.json())
 		.then(json => this.setState({userCharData: {charNotesList: json}}))
 		.catch(err => this.setState({showSpinner: false, isLoggedIn: false}));
