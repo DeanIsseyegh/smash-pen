@@ -8,6 +8,7 @@ import CharacterRow from "./CharacterRow";
 import CharacterDropdown from "./CharacterDropdown";
 import {Link, match} from "react-router-dom";
 import {CharNotes, OnEditChar, UserCharData} from "../App";
+import {fetchGetInit} from "../FetchUtil";
 
 interface CharacterListProps {
     onEditChar: OnEditChar;
@@ -34,16 +35,7 @@ class CharacterList extends Component<CharacterListProps, CharacterListState> {
 	}
 
 	componentWillMount() {
-	    const headers = new Headers();
-	    const token = localStorage.getItem('token');
-	    headers.append('Accept', 'application/json');
-	    headers.append('Content-Type', 'application/json');
-	    headers.append('Authorization', token ? token : '');
-		let init: RequestInit = {
-			method: 'GET',
-			headers: headers
-		};
-		fetch('http://localhost:8080/characters', init)
+		fetch('http://localhost:8080/characters', fetchGetInit())
 			.then(response => response.json())
 			.then(result => { this.setState({ characterList: result })});
 	}

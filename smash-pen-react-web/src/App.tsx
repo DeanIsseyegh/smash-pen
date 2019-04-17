@@ -10,7 +10,7 @@ import Main from "./Main";
 import EditCharacter from "./Character/EditCharacter";
 import {Loading} from "./Loading";
 import {MainNav} from "./MainNav";
-import {fetchGetInit, fetchPutInit} from "./FetchUtil";
+import {fetchGetInit, fetchPostInit, fetchPutInit} from "./FetchUtil";
 
 interface AppProps {
     onEditChar: OnEditChar
@@ -78,14 +78,8 @@ class App extends Component<AppProps, AppState> {
 
 	onLogIn(username: string, password: string): void {
 		this.setState({showSpinner: true});
-		fetch('http://localhost:8080/login', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({"username":username,"password":password})
-		})
+		const userAndPass = {"username":username,"password":password};
+		fetch('http://localhost:8080/login', fetchPostInit(userAndPass))
 		.then(response => {
 				if (response && response.headers.get('authorization')) {
                     const authHeader = response.headers.get('authorization');

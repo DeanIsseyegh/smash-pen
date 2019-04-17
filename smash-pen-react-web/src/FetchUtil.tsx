@@ -13,7 +13,7 @@ const fetchPutInit = (body: any): RequestInit => {
 const fetchInit = (method: string, body: any): RequestInit => {
     const headers = new Headers();
     const token = localStorage.getItem('token');
-    headers.append('Authorization', token ? token : '');
+    if (token) headers.append('Authorization', token);
     headers.append('Accept', 'application/json');
     headers.append('Content-Type', 'application/json');
     return {
