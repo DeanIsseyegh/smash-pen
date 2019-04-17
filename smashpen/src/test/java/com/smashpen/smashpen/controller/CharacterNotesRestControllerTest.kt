@@ -22,7 +22,6 @@ class CharacterNotesRestControllerTest {
     private lateinit var userRepository: UserRepository
     private lateinit var characterNotesService: CharacterNotesService
 
-
     @Before
     fun setUp() {
         characterNotesRepository = mock(CharacterNotesRepository::class.java)
