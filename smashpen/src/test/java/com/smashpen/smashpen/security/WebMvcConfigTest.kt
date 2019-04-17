@@ -1,11 +1,7 @@
 package com.smashpen.smashpen.security
 
-import com.smashpen.smashpen.service.AccessValidationService
-import org.hamcrest.CoreMatchers.`is`
 import org.junit.Before
 import org.junit.Test
-
-import org.junit.Assert.*
 import org.mockito.Mockito.*
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
@@ -13,12 +9,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 class WebMvcConfigTest {
 
     lateinit var config: WebMvcConfig
-    lateinit var accessValidationService: AccessValidationService
+    lateinit var userValidationInterceptor: UserValidationInterceptor
 
     @Before
     fun setUp() {
-        accessValidationService = mock(AccessValidationService::class.java)
-        config = WebMvcConfig(accessValidationService)
+        userValidationInterceptor = mock(UserValidationInterceptor::class.java)
+        config = WebMvcConfig(userValidationInterceptor)
     }
 
     @Test
@@ -31,12 +27,6 @@ class WebMvcConfigTest {
 
         verify(interceptorRegistry, times(1)).addInterceptor(any(UserValidationInterceptor::class.java))
         verify(interceptorRegistration, times(1)).addPathPatterns("/**/character")
-    }
-
-    @Test
-    fun `Creates user UserValidationInterceptor with correct dependencies`() {
-        val userValidationInterceptor = config.userValidationInterceptor()
-        assertThat(userValidationInterceptor.accessValidationService, `is`(accessValidationService))
     }
 
 }
