@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import './pure-release-1.0.0/base.css';
 import './pure-release-1.0.0/buttons.css';
-import LogIn from "./LogIn";
+import LogIn from "./login/LogIn";
 
 class Main extends Component {
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './App.css';
-import './pure-release-1.0.0/base.css';
-import './pure-release-1.0.0/buttons.css';
+import '../App.css';
+import '../pure-release-1.0.0/base.css';
+import '../pure-release-1.0.0/buttons.css';
 
 class LogIn extends Component {
 	constructor(props) {

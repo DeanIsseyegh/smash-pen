@@ -4,7 +4,7 @@ import {Character, OnDropDownChange} from "./CharacterList";
 
 interface CharacterDropdownProps {
     characters: Character[];
-    onDropDownChange: OnDropDownChange
+    onDropDownChange: OnDropDownChange;
 }
 
 const CharacterDropdown = ({characters, onDropDownChange}: CharacterDropdownProps) =>

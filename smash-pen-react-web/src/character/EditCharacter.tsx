@@ -5,11 +5,11 @@ import {CharNotes, UpdateCharData} from "../App";
 interface EditCharacterProps {
     charNotes: CharNotes;
     updateCharData: UpdateCharData;
+    updateCharMsg: string;
 }
 
 interface EditCharacterState {
     charNotes: CharNotes;
-    successCharMsg: string;
 }
 
 class EditCharacter extends Component<EditCharacterProps, EditCharacterState> {
@@ -17,12 +17,11 @@ class EditCharacter extends Component<EditCharacterProps, EditCharacterState> {
 		super(props);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleCharUpdate = this.handleCharUpdate.bind(this);
-		this.state = { charNotes : props.charNotes, successCharMsg: '' };
+		this.state = { charNotes : props.charNotes };
 	}
 
 	handleSubmit(e: any) {
 		e.preventDefault();
-		this.setState({ successCharMsg: 'Updated!' });
 		this.props.updateCharData(this.state.charNotes);
 	}
 
@@ -32,7 +31,7 @@ class EditCharacter extends Component<EditCharacterProps, EditCharacterState> {
 	}
 
 	render() {
-		const { charNotes } = this.props;
+		const { charNotes, updateCharMsg } = this.props;
 		return (
 			<div>
 				<CharacterImage name={charNotes.smashCharacter.name}/>
@@ -40,7 +39,7 @@ class EditCharacter extends Component<EditCharacterProps, EditCharacterState> {
 					<input onChange={this.handleCharUpdate} value={this.state.charNotes.notes} type="text"/>
 					<button>Submit</button>
 				</form>
-				{this.state.successCharMsg}
+				{updateCharMsg}
 			</div>
 		);
 	}
