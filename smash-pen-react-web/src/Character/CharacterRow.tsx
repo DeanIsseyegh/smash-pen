@@ -17,17 +17,15 @@ class CharacterRow extends Component<CharacterRowProps> {
 	}
 
 	render() {
-		//TODO Create obj to hold image,name etc. in obj?
 		const charNotes: CharNotes = this.props.charNotes;
-		const { smashCharacter, notes } = charNotes;
 		const { onEditChar, match } = this.props;
 		return (
 			<tr>
 				<td>
-					<CharacterImage name={smashCharacter.name}/>
+					<CharacterImage name={charNotes.smashCharacter.name}/>
 				</td>
 				<td>
-					{notes}
+					{charNotes.notes}
 				</td>
 				<td>
 					<Link to={match.url + "/edit"}>
