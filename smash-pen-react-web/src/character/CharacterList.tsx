@@ -35,7 +35,7 @@ class CharacterList extends Component<CharacterListProps, CharacterListState> {
 	}
 
 	componentWillMount() {
-		fetch('http://localhost:8080/characters', fetchGetInit())
+		fetch(process.env.REACT_APP_SERVER_URL + 'characters', fetchGetInit())
 			.then(response => response.json())
 			.then(result => { this.setState({ characterList: result })});
 	}

@@ -74,7 +74,6 @@ class App extends Component<{}, AppState> {
     }
 
     componentDidMount() {
-        console.log("Component did mount");
         const loginToken = localStorage.getItem('token');
         if (loginToken) {
             this.handleExistingUserToken()
@@ -86,10 +85,8 @@ class App extends Component<{}, AppState> {
     private handleExistingUserToken() {
         const loginToken = localStorage.getItem('token');
         if (loginToken) {
-            console.log("LOGIN TOKEN FOUND");
             const userId: string = this.getUserIdFromToken(loginToken);
             if (userId) {
-                console.log("Reusing user token! User id is " + userId);
                 this.fetchLatestUserNotes(userId)
                     .then(() => this.setState({
                         userId: userId,
@@ -103,7 +100,7 @@ class App extends Component<{}, AppState> {
     }
 
     private fetchLatestUserNotes(userId: string) {
-        return fetch('http://localhost:8080/' + userId + '/character', fetchGetInit())
+        return fetch(process.env.REACT_APP_SERVER_URL + userId + '/character', fetchGetInit())
             .then(response => this.handleResponse(response))
             .then(response => response.json())
             .then(json => this.setState({userCharData: {charNotesList: json}}));
@@ -114,7 +111,7 @@ class App extends Component<{}, AppState> {
     }
 
     updateCharData(charData: CharNotes): void {
-        fetch('http://localhost:8080/' + this.state.userId + '/character', fetchPutInit(charData))
+        fetch(process.env.REACT_APP_SERVER_URL + this.state.userId + '/character', fetchPutInit(charData))
             .then(response => this.handleResponse(response))
             .then(() => this.fetchLatestUserNotes(this.state.userId))
             .then(() => this.setState({updateCharMsg: "Character successfully updated!"}))
@@ -125,7 +122,7 @@ class App extends Component<{}, AppState> {
     onLogIn(username: string, password: string): void {
         this.setState({showSpinner: true});
         const userAndPass = {"username": username, "password": password};
-        fetch('http://localhost:8080/login', fetchPostInit(userAndPass))
+        fetch(process.env.REACT_APP_SERVER_URL + 'login', fetchPostInit(userAndPass))
             .then(response => this.handleResponse(response))
             .then(response => this.handleLogin(response))
             .then(() => this.fetchLatestUserNotes(this.state.userId))
