@@ -15,8 +15,8 @@ import java.util.*
 
 class AccessValidationServiceTest {
 
-    lateinit private var service: AccessValidationService
-    lateinit private var userRepository: UserRepository
+    private lateinit var service: AccessValidationService
+    private lateinit var userRepository: UserRepository
 
     @Before
     fun setUp() {
@@ -46,6 +46,16 @@ class AccessValidationServiceTest {
         user.id = 3
         `when`(userRepository.findById(3)).thenReturn(Optional.of(user))
         `when`(userRepository.findByUsername("bob")).thenReturn(Optional.of(user))
+        service.validateUserIdMatchesLoggedInUser(3)
+    }
+
+    @Test(expected = UserNotFoundException::class)
+    fun `If current user's username does not exist, then throw exception`() {
+        mockedLoggedInUser("bob")
+        val user = User(true, "bob", "pass")
+        user.id = 3
+        `when`(userRepository.findById(3)).thenReturn(Optional.of(user))
+        `when`(userRepository.findByUsername("bob")).thenReturn(Optional.empty())
         service.validateUserIdMatchesLoggedInUser(3)
     }
 

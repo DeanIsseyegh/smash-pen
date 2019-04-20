@@ -12,9 +12,10 @@ import {Loading} from "./Loading";
 import {MainNav} from "./MainNav";
 import {fetchGetInit, fetchPostInit, fetchPutInit} from "./FetchUtil";
 import LogInError from "./login/LogInError";
+import JWT from "jwt-decode";
 
 interface AppState {
-    userId?: string;
+    userId: string;
     isLoggedIn: boolean;
     showSpinner: boolean;
     token: string;
@@ -22,6 +23,7 @@ interface AppState {
     userCharData: UserCharData
     updateCharMsg: string;
     isLogInErr: boolean;
+    showLogIn: boolean;
 }
 
 export type OnEditChar = (charNotes: CharNotes) => void;
@@ -45,22 +47,66 @@ export interface UserCharData {
     charNotesList: CharNotes[]
 }
 
+const emptyCharData: CharNotes = {smashCharacter: {id: 0, name: ''}, notes: ''};
+
+const initialState: AppState = {
+    userCharData: {charNotesList: []},
+    selectedChar: emptyCharData,
+    isLoggedIn: false,
+    token: '',
+    showSpinner: false,
+    updateCharMsg: '',
+    isLogInErr: false,
+    userId: '',
+    showLogIn: false
+};
+
+const noLogInTokenState: AppState = {...initialState, ...{showLogIn: true}};
+
 class App extends Component<{}, AppState> {
-    constructor() {
+    constructor({}) {
         super({});
         this.setSelectedChar = this.setSelectedChar.bind(this);
         this.updateCharData = this.updateCharData.bind(this);
         this.onLogIn = this.onLogIn.bind(this);
-        const emptyCharData: CharNotes = {smashCharacter: {id: 0, name: ''}, notes: ''};
-        this.state = {
-            userCharData: {charNotesList: []},
-            selectedChar: emptyCharData,
-            isLoggedIn: false,
-            token: '',
-            showSpinner: false,
-            updateCharMsg: '',
-            isLogInErr: false
-        };
+        this.handleExistingUserToken = this.handleExistingUserToken.bind(this);
+        this.state = initialState
+    }
+
+    componentDidMount() {
+        console.log("Component did mount");
+        const loginToken = localStorage.getItem('token');
+        if (loginToken) {
+            this.handleExistingUserToken()
+        } else {
+            this.setState(noLogInTokenState);
+        }
+    }
+
+    private handleExistingUserToken() {
+        const loginToken = localStorage.getItem('token');
+        if (loginToken) {
+            console.log("LOGIN TOKEN FOUND");
+            const userId: string = this.getUserIdFromToken(loginToken);
+            if (userId) {
+                console.log("Reusing user token! User id is " + userId);
+                this.fetchLatestUserNotes(userId)
+                    .then(() => this.setState({
+                        userId: userId,
+                        isLogInErr: false,
+                        isLoggedIn: true,
+                        showSpinner: false
+                    }))
+                    .catch(() => this.setState(noLogInTokenState));
+            }
+        }
+    }
+
+    private fetchLatestUserNotes(userId: string) {
+        return fetch('http://localhost:8080/' + userId + '/character', fetchGetInit())
+            .then(response => this.handleResponse(response))
+            .then(response => response.json())
+            .then(json => this.setState({userCharData: {charNotesList: json}}));
     }
 
     setSelectedChar(charData: CharNotes): void {
@@ -70,10 +116,7 @@ class App extends Component<{}, AppState> {
     updateCharData(charData: CharNotes): void {
         fetch('http://localhost:8080/' + this.state.userId + '/character', fetchPutInit(charData))
             .then(response => this.handleResponse(response))
-            .then(() => fetch('http://localhost:8080/' + this.state.userId + '/character', fetchGetInit()))
-            .then(response => this.handleResponse(response))
-            .then(response => response.json())
-            .then(json => this.setState({userCharData: {charNotesList: json}}))
+            .then(() => this.fetchLatestUserNotes(this.state.userId))
             .then(() => this.setState({updateCharMsg: "Character successfully updated!"}))
             .catch(() => this.setState({updateCharMsg: "There was a problem updating your Character!"}));
 
@@ -85,9 +128,8 @@ class App extends Component<{}, AppState> {
         fetch('http://localhost:8080/login', fetchPostInit(userAndPass))
             .then(response => this.handleResponse(response))
             .then(response => this.handleLogin(response))
-            .then(() => fetch('http://localhost:8080/' + this.state.userId + '/character', fetchGetInit()))
-            .then(response => response.json())
-            .then(json => this.setState({userCharData: {charNotesList: json}, isLogInErr: false}))
+            .then(() => this.fetchLatestUserNotes(this.state.userId))
+            .then(() => this.setState({isLogInErr: false}))
             .catch(() => this.setState({showSpinner: false, isLoggedIn: false, isLogInErr: true}));
     }
 
@@ -100,12 +142,21 @@ class App extends Component<{}, AppState> {
 
     private handleLogin(response: Response) {
         const authHeader = response ? response.headers.get('authorization') : null;
-        const userId = response ? response.headers.get("UserID") : null;
+        const userId = response ? this.getUserIdFromToken(authHeader) : null;
         if (authHeader && userId) {
             localStorage.setItem('token', authHeader ? authHeader : '');
-            this.setState({showSpinner: false, isLoggedIn: true, userId: userId ? userId : 'unset'});
+            this.setState({showSpinner: false, isLoggedIn: true, userId: userId});
         } else {
             throw Error("Login failed")
+        }
+    }
+
+    private getUserIdFromToken(token: string | null): string {
+        if (token) {
+            const jwt: any = JWT(token);
+            return jwt.sub;
+        } else {
+            return '';
         }
     }
 
@@ -119,11 +170,11 @@ class App extends Component<{}, AppState> {
                     <Switch>
                         <Route path="/player" component={PlayerList}/>
 
-                        <Route exact path="/" render={(props) => <Main
+                        {this.state.showLogIn && <Route exact path="/" render={(props) => <Main
                             {...props}
                             onLogIn={this.onLogIn}
                             isLoggedIn={isLoggedIn}/>}
-                        />
+                        />}
 
                         {this.state.isLoggedIn &&
                         <Route exact path="/character" render={(props) => <CharacterList
@@ -144,8 +195,6 @@ class App extends Component<{}, AppState> {
             </div>
         );
     }
-
-
 }
 
 

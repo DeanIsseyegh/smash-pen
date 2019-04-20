@@ -20,8 +20,8 @@ class JwtServiceTest {
     @Test
     fun `builds token`() {
         val date = Date(anEpochTime)
-        val resultToken = service.buildToken("user", date, "ThisIsASecret")
-        val expectedToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiZXhwIjoxNTEwNjA3fQ.EBeuuglrBv73hj-kotGO48eknA7vFA25dcuFBBpRLj1Ric7EQmDACXyFTUREzDPUXGleBZg7t1w6-BLJnOTfGQ"
+        val resultToken = service.buildToken(1L, date, "ThisIsASecret")
+        val expectedToken = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiZXhwIjoxNTEwNjA3fQ.6-XxlpAVE_FT9PE5C_PqK3sWPsu2iczmSeTHSclsUpiY2FKi9_LKKDrzNVpFVXdfPVdmT0LHcupmXOZ-VbKw7A"
         assertThat(resultToken, `is`(expectedToken))
     }
 
