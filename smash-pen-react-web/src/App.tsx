@@ -13,10 +13,6 @@ import {MainNav} from "./MainNav";
 import {fetchGetInit, fetchPostInit, fetchPutInit} from "./FetchUtil";
 import LogInError from "./login/LogInError";
 
-interface AppProps {
-    onEditChar: OnEditChar
-}
-
 interface AppState {
     userId?: string;
     isLoggedIn: boolean;
@@ -31,6 +27,8 @@ interface AppState {
 export type OnEditChar = (charNotes: CharNotes) => void;
 
 export type UpdateCharData = (charData: CharNotes) => void;
+
+export type OnLogIn = (username: string, password: string) => void
 
 export interface CharNotes {
     id?: number;
@@ -47,9 +45,9 @@ export interface UserCharData {
     charNotesList: CharNotes[]
 }
 
-class App extends Component<AppProps, AppState> {
-    constructor(props: AppProps) {
-        super(props);
+class App extends Component<{}, AppState> {
+    constructor() {
+        super({});
         this.setSelectedChar = this.setSelectedChar.bind(this);
         this.updateCharData = this.updateCharData.bind(this);
         this.onLogIn = this.onLogIn.bind(this);

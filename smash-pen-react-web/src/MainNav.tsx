@@ -2,7 +2,11 @@ import {Link} from 'react-router-dom'
 import React from 'react';
 import logo from './smashball.svg';
 
-export const MainNav = ({isLoggedIn}) =>
+interface MainNavProps {
+    isLoggedIn: boolean;
+}
+
+export const MainNav = ({isLoggedIn}: MainNavProps) =>
 	<div>
 		<div className="App-header">
 			<img src={logo} className="App-logo" alt="logo"/>
