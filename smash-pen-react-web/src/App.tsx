@@ -64,8 +64,8 @@ const initialState: AppState = {
 const noLogInTokenState: AppState = {...initialState, ...{showLogIn: true}};
 
 class App extends Component<{}, AppState> {
-    constructor({}) {
-        super({});
+    constructor(props: any) {
+        super(props);
         this.setSelectedChar = this.setSelectedChar.bind(this);
         this.updateCharData = this.updateCharData.bind(this);
         this.onLogIn = this.onLogIn.bind(this);
